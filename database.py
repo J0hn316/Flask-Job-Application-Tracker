@@ -167,6 +167,60 @@ def update_job_application(
         connection.close()
 
 
+def get_filtered_job_applications(
+    search_query: str = "",
+    status_filter: str = "",
+) -> list[sqlite3.Row]:
+    connection = get_connection()
+
+    try:
+        sql_query = """
+            SELECT
+                id,
+                company_name,
+                job_title,
+                status,
+                date_applied,
+                job_url,
+                location,
+                notes,
+                created_at
+            FROM job_applications
+            WHERE 1 = 1
+        """
+        parameters: list[str] = []
+
+        if search_query:
+            search_term = f"%{search_query}%"
+
+            sql_query += """
+                AND (
+                    company_name LIKE ?
+                    OR job_title LIKE ?
+                )
+            """
+            parameters.extend([search_term, search_term])
+
+        if status_filter:
+            sql_query += """
+                AND status = ?
+            """
+            parameters.append(status_filter)
+
+        sql_query += """
+            ORDER BY date_applied DESC, id DESC
+        """
+
+        applications = connection.execute(
+            sql_query,
+            parameters,
+        ).fetchall()
+
+        return applications
+    finally:
+        connection.close()
+
+
 def delete_job_application(application_id: int) -> None:
     connection = get_connection()
 

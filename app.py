@@ -1,14 +1,14 @@
 import os
 from flask import Flask, flash, redirect, render_template, request, url_for
 
-from validators import validate_job_application_input
+from validators import ALLOWED_STATUSES, validate_job_application_input
 from database import (
     add_job_application,
     create_job_applications_table,
     delete_job_application,
-    get_all_job_applications,
     get_job_application_by_id,
     update_job_application,
+    get_filtered_job_applications,
 )
 
 app = Flask(__name__)
@@ -66,13 +66,24 @@ def home() -> str:
             flash("Application added successfully.", "success")
             return redirect(url_for("home"))
 
-    applications = get_all_job_applications()
+    search_query = request.args.get("search", "").strip()
+    status_filter = request.args.get("search", "").strip()
+
+    if status_filter not in ALLOWED_STATUSES:
+        status_filter = ""
+
+    applications = get_filtered_job_applications(
+        search_query=search_query,
+        status_filter=status_filter,
+    )
 
     return render_template(
         "index.html",
         applications=applications,
         form_data=form_data,
         validation_errors=validation_errors,
+        search_query=search_query,
+        status_filter=status_filter,
     )
 
 

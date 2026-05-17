@@ -106,18 +106,77 @@
   </form>
 </section>
 
+<section class="filter-card">
+  <div class="section-heading filter-heading">
+    <div>
+      <p class="eyebrow">Search Tracker</p>
+      <h3>Find Applications</h3>
+    </div>
+  </div>
+
+  <form method="GET" class="filter-form">
+    <div class="filter-grid">
+      <div class="form-group">
+        <label for="search">Search Company or Job Title</label>
+        <input type="search" id="search" name="search" placeholder="Search Acme, Python, Frontend..."
+          value="{{ search_query }}">
+      </div>
+
+      <div class="form-group">
+        <label for="filter_status">Filter by Status</label>
+        <select id="filter_status" name="status">
+          <option value="" {% if not status_filter %}selected{% endif %}>
+            All Statuses
+          </option>
+
+          <option value="Applied" {% if status_filter=="Applied" %}selected{% endif %}>
+            Applied
+          </option>
+
+          <option value="Interviewing" {% if status_filter=="Interviewing" %}selected{% endif %}>
+            Interviewing
+          </option>
+
+          <option value="Rejected" {% if status_filter=="Rejected" %}selected{% endif %}>
+            Rejected
+          </option>
+
+          <option value="Offer" {% if status_filter=="Offer" %}selected{% endif %}>
+            Offer
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button type="submit" class="primary-button">
+        Apply Filters
+      </button>
+
+      <a href="{{ url_for('home') }}" class="secondary-link">
+        Clear Filters
+      </a>
+    </div>
+  </form>
+</section>
+
 {% if applications %}
 <section class="applications-section">
   <div class="applications-heading">
     <div>
       <p class="eyebrow">Application Tracker</p>
+
+      {% if search_query or status_filter %}
+      <h3>Filtered Results</h3>
+      {% else %}
       <h3>Saved Job Applications</h3>
+      {% endif %}
     </div>
 
     <p class="application-count">
       {{ applications | length }}
       application{% if applications | length != 1 %}s{% endif %}
-      tracked
+      shown
     </p>
   </div>
 
@@ -191,11 +250,22 @@
 </section>
 {% else %}
 <section class="empty-state-card">
+  {% if search_query or status_filter %}
+  <h3>No applications match your filters</h3>
+  <p>
+    Try a different company name, job title, or status filter.
+  </p>
+
+  <a href="{{ url_for('home') }}" class="secondary-link empty-state-link">
+    Clear Filters
+  </a>
+  {% else %}
   <h3>No job applications tracked yet</h3>
   <p>
     Add your first application using the form above.
     Once saved, it will appear here in your tracker.
   </p>
+  {% endif %}
 </section>
 {% endif %}
 {% endblock %}
