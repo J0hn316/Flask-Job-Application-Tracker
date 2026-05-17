@@ -72,30 +72,6 @@ def add_job_application(
         connection.close()
 
 
-def get_all_job_applications() -> list[sqlite3.Row]:
-    connection = get_connection()
-
-    try:
-        applications = connection.execute("""
-            SELECT
-                id,
-                company_name,
-                job_title,
-                status,
-                date_applied,
-                job_url,
-                location,
-                notes,
-                created_at
-            FROM job_applications
-            ORDER BY date_applied DESC, id DESC
-            """).fetchall()
-
-        return applications
-    finally:
-        connection.close()
-
-
 def get_job_application_by_id(
     application_id: int,
 ) -> sqlite3.Row | None:
@@ -233,5 +209,39 @@ def delete_job_application(application_id: int) -> None:
             (application_id,),
         )
         connection.commit()
+    finally:
+        connection.close()
+
+
+def get_dashboard_stats() -> dict[str, int]:
+    connection = get_connection()
+
+    try:
+        stats_row = connection.execute("""
+            SELECT
+                COUNT(*) AS total_applications,
+                COUNT(CASE WHEN status = 'Applied' THEN 1 END) AS applied_count,
+                COUNT(CASE WHEN status = 'Interviewing' THEN 1 END) AS interviewing_count,
+                COUNT(CASE WHEN status = 'Rejected' THEN 1 END) AS rejected_count,
+                COUNT(CASE WHEN status = 'Offer' THEN 1 END) AS offer_count
+            FROM job_applications
+            """).fetchone()
+
+        if stats_row is None:
+            return {
+                "total_applications": 0,
+                "applied_count": 0,
+                "interviewing_count": 0,
+                "rejected_count": 0,
+                "offer_count": 0,
+            }
+
+        return {
+            "total_applications": stats_row["total_applications"],
+            "applied_count": stats_row["applied_count"],
+            "interviewing_count": stats_row["interviewing_count"],
+            "rejected_count": stats_row["rejected_count"],
+            "offer_count": stats_row["offer_count"],
+        }
     finally:
         connection.close()

@@ -9,6 +9,7 @@ from database import (
     get_job_application_by_id,
     update_job_application,
     get_filtered_job_applications,
+    get_dashboard_stats,
 )
 
 app = Flask(__name__)
@@ -77,9 +78,12 @@ def home() -> str:
         status_filter=status_filter,
     )
 
+    dashboard_stats = get_dashboard_stats()
+
     return render_template(
         "index.html",
         applications=applications,
+        dashboard_stats=dashboard_stats,
         form_data=form_data,
         validation_errors=validation_errors,
         search_query=search_query,

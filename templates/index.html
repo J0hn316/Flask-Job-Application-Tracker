@@ -23,6 +23,42 @@
   </aside>
 </section>
 
+<section class="stats-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Dashboard</p>
+      <h3>Job Search Snapshot</h3>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <article class="stat-card">
+      <p>Total Applications</p>
+      <strong>{{ dashboard_stats["total_applications"] }}</strong>
+    </article>
+
+    <article class="stat-card stat-applied">
+      <p>Applied</p>
+      <strong>{{ dashboard_stats["applied_count"] }}</strong>
+    </article>
+
+    <article class="stat-card stat-interviewing">
+      <p>Interviewing</p>
+      <strong>{{ dashboard_stats["interviewing_count"] }}</strong>
+    </article>
+
+    <article class="stat-card stat-rejected">
+      <p>Rejected</p>
+      <strong>{{ dashboard_stats["rejected_count"] }}</strong>
+    </article>
+
+    <article class="stat-card stat-offer">
+      <p>Offers</p>
+      <strong>{{ dashboard_stats["offer_count"] }}</strong>
+    </article>
+  </div>
+</section>
+
 <section class="form-card">
   <div class="section-heading">
     <div>
