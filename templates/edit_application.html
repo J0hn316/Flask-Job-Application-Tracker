@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Application | Job Application Tracker{% endblock %}
+
+{% block content %}
+<section class="hero-card single-column-hero">
+  <div>
+    <p class="eyebrow">Update Application</p>
+    <h2>Edit a tracked job application.</h2>
+    <p class="hero-text">
+      Adjust the company, title, status, date, or notes, then save your changes.
+    </p>
+  </div>
+</section>
+
+<section class="form-card">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">Edit Record</p>
+      <h3>{{ application["company_name"] }} — {{ application["job_title"] }}</h3>
+    </div>
+  </div>
+
+  <form method="POST" class="application-form">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="company_name">Company Name</label>
+        <input type="text" id="company_name" name="company_name" value="{{ application['company_name'] }}">
+      </div>
+
+      <div class="form-group">
+        <label for="job_title">Job Title</label>
+        <input type="text" id="job_title" name="job_title" value="{{ application['job_title'] }}">
+      </div>
+
+      <div class="form-group">
+        <label for="status">Application Status</label>
+        <select id="status" name="status">
+          <option value="Applied" {% if application["status"]=="Applied" %}selected{% endif %}>
+            Applied
+          </option>
+
+          <option value="Interviewing" {% if application["status"]=="Interviewing" %}selected{% endif %}>
+            Interviewing
+          </option>
+
+          <option value="Rejected" {% if application["status"]=="Rejected" %}selected{% endif %}>
+            Rejected
+          </option>
+
+          <option value="Offer" {% if application["status"]=="Offer" %}selected{% endif %}>
+            Offer
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date_applied">Date Applied</label>
+        <input type="date" id="date_applied" name="date_applied" value="{{ application['date_applied'] }}">
+      </div>
+
+      <div class="form-group">
+        <label for="job_url">Job Posting URL</label>
+        <input type="url" id="job_url" name="job_url" value="{{ application['job_url'] }}">
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" value="{{ application['location'] }}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes" rows="5">{{ application["notes"] }}</textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="primary-button">
+        Save Changes
+      </button>
+
+      <a href="{{ url_for('home') }}" class="secondary-link">
+        Cancel
+      </a>
+    </div>
+  </form>
+</section>
+{% endblock %}

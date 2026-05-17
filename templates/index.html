@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Job Application Tracker{% endblock %}
+
+{% block content %}
+<section class="hero-card">
+  <div>
+    <p class="eyebrow">Project 2</p>
+    <h2>Track every job application in one place.</h2>
+    <p class="hero-text">
+      Add applications as you apply. In the next phase,
+      we’ll display everything you save in a structured tracker dashboard.
+    </p>
+  </div>
+
+  <aside class="coming-soon-card">
+    <p class="eyebrow">Current Focus</p>
+    <ul>
+      <li>Save application details</li>
+      <li>Persist data in SQLite</li>
+      <li>Prepare for tracker display</li>
+    </ul>
+  </aside>
+</section>
+
+<section class="form-card">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">New Application</p>
+      <h3>Add a Job Application</h3>
+    </div>
+  </div>
+
+  <form method="POST" class="application-form">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="company_name">Company Name</label>
+        <input type="text" id="company_name" name="company_name" placeholder="OpenAI">
+      </div>
+
+      <div class="form-group">
+        <label for="job_title">Job Title</label>
+        <input type="text" id="job_title" name="job_title" placeholder="Software Engineer">
+      </div>
+
+      <div class="form-group">
+        <label for="status">Application Status</label>
+        <select id="status" name="status">
+          <option value="Applied">Applied</option>
+          <option value="Interviewing">Interviewing</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Offer">Offer</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date_applied">Date Applied</label>
+        <input type="date" id="date_applied" name="date_applied">
+      </div>
+
+      <div class="form-group">
+        <label for="job_url">Job Posting URL</label>
+        <input type="url" id="job_url" name="job_url" placeholder="https://company.com/careers/software-engineer">
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" placeholder="Remote">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes" rows="5"
+        placeholder="Referral, recruiter name, salary range, next steps, etc."></textarea>
+    </div>
+
+    <button type="submit" class="primary-button">
+      Save Application
+    </button>
+  </form>
+</section>
+
+{% if applications %}
+<section class="applications-section">
+  <div class="applications-heading">
+    <div>
+      <p class="eyebrow">Application Tracker</p>
+      <h3>Saved Job Applications</h3>
+    </div>
+
+    <p class="application-count">
+      {{ applications | length }}
+      application{% if applications | length != 1 %}s{% endif %}
+      tracked
+    </p>
+  </div>
+
+  <div class="applications-grid">
+    {% for application in applications %}
+    <article class="application-card">
+      <div class="application-card-header">
+        <div>
+          <p class="application-company">
+            {{ application["company_name"] }}
+          </p>
+
+          <h4>
+            {{ application["job_title"] }}
+          </h4>
+        </div>
+
+        <span class="status-badge status-{{ application['status'] | lower }}">
+          {{ application["status"] }}
+        </span>
+      </div>
+
+      <dl class="application-details">
+        <div>
+          <dt>Date Applied</dt>
+          <dd>{{ application["date_applied"] }}</dd>
+        </div>
+
+        <div>
+          <dt>Location</dt>
+          <dd>
+            {% if application["location"] %}
+            {{ application["location"] }}
+            {% else %}
+            Not provided
+            {% endif %}
+          </dd>
+        </div>
+      </dl>
+
+      {% if application["job_url"] %}
+      <p class="application-link">
+        <strong>Job URL:</strong>
+        <a href="{{ application['job_url'] }}" target="_blank" rel="noopener noreferrer">
+          {{ application["job_url"] }}
+        </a>
+      </p>
+      {% endif %}
+
+      {% if application["notes"] %}
+      <div class="application-notes">
+        <strong>Notes:</strong>
+        <p>{{ application["notes"] }}</p>
+      </div>
+      {% else %}
+      <p class="muted-text">No notes added.</p>
+      {% endif %}
+      <div class="application-actions">
+        <a href="{{ url_for('edit_job_application', application_id=application['id']) }}" class="secondary-link">
+          Edit
+        </a>
+        <form method="POST" action="{{ url_for('remove_job_application', application_id=application['id']) }}">
+          <button type="submit" class="danger-button">
+            Delete
+          </button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% else %}
+<section class="empty-state-card">
+  <h3>No job applications tracked yet</h3>
+  <p>
+    Add your first application using the form above.
+    Once saved, it will appear here in your tracker.
+  </p>
+</section>
+{% endif %}
+{% endblock %}
